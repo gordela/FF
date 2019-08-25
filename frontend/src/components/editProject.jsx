@@ -1,10 +1,10 @@
 import React from "react";
 import Joi from "joi-browser";
 import Form from "./common/form";
-import { getStyles } from "../services/styleService";
-import { getShoe, saveShoe } from "../services/shoeService";
+import { getCategories } from "../services/categoryService";
+import { getProject, saveProject } from "../services/projectService";
 
-class EditMovie extends Form {
+class EditProject extends Form {
   state = {
     data: {
       title: "",
@@ -41,7 +41,7 @@ class EditMovie extends Form {
   };
 
   async populateStyles() {
-    const { data: styles } = await getStyles();
+    const { data: styles } = await getCategories();
     this.setState({ styles });
   }
 
@@ -49,7 +49,7 @@ class EditMovie extends Form {
     try {
       const shoeId = this.props.match.params.id;
       if (shoeId === "new") return;
-      const { data: shoe } = await getShoe(shoeId);
+      const { data: shoe } = await getProject(shoeId);
       this.setState({ data: this.mapToViewModel(shoe) });
     } catch (error) {
       if (error.response && error.response.status === 404)
@@ -77,7 +77,7 @@ class EditMovie extends Form {
   }
 
   doSubmit = async () => {
-    await saveShoe(this.state.data);
+    await saveProject(this.state.data);
 
     this.props.history.push("/shoes");
   };
@@ -85,7 +85,7 @@ class EditMovie extends Form {
   render() {
     return (
       <div>
-        <h1>Edit Shoe</h1>
+        <h1>Edit Project</h1>
         <form onSubmit={this.handleSubmit}>
           {this.renderInput("title", "Title")}
           {this.renderInput("numberInStock", "Number in Stock", "number")}
@@ -102,4 +102,4 @@ class EditMovie extends Form {
   }
 }
 
-export default EditMovie;
+export default EditProject;

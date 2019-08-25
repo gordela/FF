@@ -3,63 +3,52 @@ import ProtectedRoute from "./components/common/protectedRoute";
 import { Route, Redirect, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import LoginForm from "./components/loginForm";
-import EditShoe from "./components/editShoe";
-import Register from "./components/register";
+import EditProject from "./components/editProject";
 import NotFound from "./components/notFound";
-import EditUser from "./components/editUser";
 import Logout from "./components/logout";
 import NavBar from "./components/navBar";
-import Shoes from "./components/shoes";
+import Projects from "./components/projects";
 import auth from "./services/authService";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-import CartFlex from "./components/cartFlex";
 import EditStyle from "./components/editStyle";
+import Footer from "./components/footer";
+import Contact from "./components/contact";
+import News from "./components/news";
 
 class App extends Component {
-  state = { countInBag: 0 };
+  state = {};
   componentDidMount() {
     const user = auth.getCurrentUser();
     this.setState({ user });
-    this.countBag();
   }
-
-  countBag = () => {
-    const bag = JSON.parse(localStorage.getItem("bag")) || {};
-    const keys = Object.keys(bag);
-    let count = 0;
-    keys.filter(i => (count += bag[i]));
-    this.setState({ countInBag: count });
-  };
 
   render() {
     return (
-      <div className="container">
-        <ToastContainer />
-        <NavBar count={this.state.countInBag} />
-        <Switch>
-          <Route path="/user/" component={EditUser} />
-          <Route
-            path="/cart/"
-            render={props => <CartFlex count={this.countBag} {...props} />}
-          />
-          <Route path="/register" component={Register} />
-          <Route path="/login" component={LoginForm} />
-          <ProtectedRoute path="/shoes/:id" component={EditShoe} />
-          <ProtectedRoute path="/styles/:id" component={EditStyle} />
-
-          <Route path="/logout" component={Logout} />
-          <Route
-            path="/shoes"
-            render={props => (
-              <Shoes count={this.countBag} user={this.state.user} {...props} />
-            )}
-          />
-          <Route path="/not-found" component={NotFound} />
-          <Redirect from="/" exact to="/shoes" />
-          <Redirect to="/not-found" />
-        </Switch>
-      </div>
+      <React.Fragment>
+        <div className="container">
+          <ToastContainer />
+          <NavBar />
+          <Switch>
+            <Route path="/login" component={LoginForm} />
+            <Route path="/contact" component={Contact} />
+            <Route path="/news" component={News} />
+            <ProtectedRoute path="/projects/:id" component={EditProject} />
+            {/* <ProtectedRoute path="/category/:id" component={EditCategory} />
+          <ProtectedRoute path="/news/:id" component={EditNews} />
+          <ProtectedRoute path="/career/:id" component={EditCareer} /> */}
+            <Route path="/logout" component={Logout} />
+            <Route
+              path="/projects"
+              render={props => <Projects user={this.state.user} {...props} />}
+            />
+            <Route path="/not-found" component={NotFound} />
+            <Redirect from="/" exact to="/projects" />
+            <Redirect to="/not-found" />
+          </Switch>
+        </div>
+        <Footer></Footer>
+      </React.Fragment>
     );
   }
 }

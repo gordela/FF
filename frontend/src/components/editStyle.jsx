@@ -1,7 +1,7 @@
 import React from "react";
 import Joi from "joi-browser";
 import Form from "./common/form";
-import { getStyle, saveStyle } from "../services/styleService";
+import { getCategory, saveCategory } from "../services/categoryService";
 
 class EditStyle extends Form {
   state = {
@@ -19,7 +19,7 @@ class EditStyle extends Form {
     try {
       const styleId = this.props.match.params.id;
       if (styleId === "new") return;
-      const { data: style } = await getStyle(styleId);
+      const { data: style } = await getCategory(styleId);
       this.setState({ data: this.mapToViewModel(style) });
     } catch (error) {
       if (error.response && error.response.status === 404)
@@ -36,7 +36,7 @@ class EditStyle extends Form {
   }
 
   doSubmit = async () => {
-    await saveStyle(this.state.data);
+    await saveCategory(this.state.data);
 
     this.props.history.push("/shoes");
   };

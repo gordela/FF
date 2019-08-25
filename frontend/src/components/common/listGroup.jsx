@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { deleteStyle } from "../../services/styleService";
+import { deleteCategory } from "../../services/categoryService";
 
 class ListGroup extends Component {
   state = { items: [] };
@@ -13,7 +13,7 @@ class ListGroup extends Component {
     let stat = { ...this.state };
     const modded = stat.items.filter(x => x._id !== item._id);
     this.setState({ items: modded });
-    deleteStyle(item._id);
+    deleteCategory(item._id);
   };
 
   render() {

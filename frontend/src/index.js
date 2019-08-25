@@ -9,6 +9,7 @@ import "jquery/dist/jquery.min.js";
 import "bootstrap/dist/js/bootstrap.min.js";
 import { BrowserRouter } from "react-router-dom";
 import "font-awesome/css/font-awesome.css";
+import FlagIcon from "react-flag-icon-css";
 
 ReactDOM.render(
   <BrowserRouter>

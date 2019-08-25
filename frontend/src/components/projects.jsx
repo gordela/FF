@@ -1,20 +1,21 @@
 import React, { Component } from "react";
-import { getShoes, deleteShoe } from "../services/shoeService";
-import { getStyles } from "../services/styleService";
+import { getProjects, deleteProject } from "../services/projectService";
+import { getCategories } from "../services/categoryService";
 import { paginate } from "../utils/paginate";
 import Pagination from "./common/pagination";
 import ListGroup from "./common/listGroup";
 import { Link } from "react-router-dom";
-import ShoesFlex from "./shoesFlex";
+import ProjectFlex from "./projectFlex";
 import SearchBox from "./searchBox";
 import { toast } from "react-toastify";
 import Sort from "./common/sort";
 import _ from "lodash";
 
-class Shoes extends Component {
+class Projects extends Component {
   state = {
-    shoes: [],
-    styles: [],
+    projects: [],
+    categories: [],
+    branches: [],
     pageSize: 4,
     currentPage: 1,
     searchQuery: "",
@@ -23,22 +24,22 @@ class Shoes extends Component {
   };
 
   async componentDidMount() {
-    const { data } = await getStyles();
-    const styles = [{ name: "All Styles", _id: "" }, ...data];
-    const { data: shoes } = await getShoes();
-    this.setState({ shoes, styles });
+    const { data } = await getProjects();
+    const categories = [{ name: "All Styles", _id: "" }, ...data];
+    const { data: projects } = await getProjects();
+    this.setState({ projects, categories });
   }
 
-  handleDelete = async shoe => {
-    const originalShoes = this.state.shoes;
-    const shoes = originalShoes.filter(s => s._id !== shoe._id);
-    this.setState({ shoes });
+  handleDelete = async project => {
+    const originalProjects = this.state.projects;
+    const projects = originalProjects.filter(s => s._id !== project._id);
+    this.setState({ projects });
     try {
-      await deleteShoe(shoe._id);
+      await deleteProject(project._id);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        toast.error("This shoe has already been deleted");
-        this.setState({ shoes: originalShoes });
+        toast.error("This project has already been deleted");
+        this.setState({ projects: originalProjects });
       }
     }
   };
@@ -71,35 +72,35 @@ class Shoes extends Component {
     const {
       pageSize,
       currentPage,
-      shoes: allShoes,
+      projects: allProjects,
       selectedStyle,
       sortColumn,
       searchQuery
     } = this.state;
-    let filtered = allShoes;
+    let filtered = allProjects;
 
     if (searchQuery)
-      filtered = allShoes.filter(s =>
+      filtered = allProjects.filter(s =>
         s.title.toLowerCase().startsWith(searchQuery.toLowerCase())
       );
     else if (selectedStyle && selectedStyle._id)
-      filtered = allShoes.filter(m => m.style._id === selectedStyle._id);
+      filtered = allProjects.filter(m => m.style._id === selectedStyle._id);
 
     const sorted = _.orderBy(filtered, [sortColumn.path], sortColumn.order);
 
-    const shoes = paginate(sorted, currentPage, pageSize);
-    return { totalCount: filtered.length, data: shoes };
+    const projects = paginate(sorted, currentPage, pageSize);
+    return { totalCount: filtered.length, data: projects };
   };
 
   render() {
-    const { length: count } = this.state.shoes;
+    const { length: count } = this.state.projects;
     const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
     const { user } = this.props;
     let isAdmin = false;
     if (user) isAdmin = user.isAdmin;
 
     if (count === 0) return <p>There are no movies in the database</p>;
-    const { totalCount, data: shoes } = this.getPagedData();
+    const { totalCount, data: projects } = this.getPagedData();
 
     return (
       <React.Fragment>
@@ -107,30 +108,21 @@ class Shoes extends Component {
           <Link
             style={{ marginBottom: "10px" }}
             className="btn btn-primary"
-            to="/shoes/new"
+            to="/projects/new"
           >
-            New Shoe
+            New Project
           </Link>
         )}
-        <ul className="d-flex flex-wrap justify-content-between align-content-between">
-          <ListGroup
-            deleteStyle={this.deleteStyle}
-            isAdmin={isAdmin}
-            selectedItem={this.state.selectedStyle}
-            items={this.state.styles}
-            onItemSelect={this.handleStyleSelect}
-          />
-          <Sort
-            sortColumn={sortColumn}
-            onSort={this.handleSort}
-            sortIcon={this.renderSortIcon}
-          />
-        </ul>
-        <SearchBox value={searchQuery} onChange={this.handleSearch} />
-        <ShoesFlex
+        <br />
+        <h1>
+          <span class="first-letter">P</span>rojects
+        </h1>
+        <br />
+        {/* <SearchBox value={searchQuery} onChange={this.handleSearch} /> */}
+        <ProjectFlex
           count={this.props.count}
           onRenewBag={this.props.onRenewBag}
-          shoes={shoes}
+          projects={projects}
           onDelete={this.handleDelete}
         />
         <Pagination
@@ -144,4 +136,4 @@ class Shoes extends Component {
   }
 }
 
-export default Shoes;
+export default Projects;
